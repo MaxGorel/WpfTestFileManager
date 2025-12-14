@@ -1,0 +1,34 @@
+﻿<Window x:Class="FileManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileManager" xmlns:viewmodels="clr-namespace:WpfTest.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" MinWidth="730" MinHeight="330">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+            <Label>Путь:</Label>
+            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString}"></TextBox>
+            <Button Margin="5" Command="{Binding SearchCommand}">Открыть</Button>
+        </StackPanel>
+
+        <Grid Margin="10" Grid.Row="1">
+            <DataGrid ItemsSource="{Binding Files}"
+                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Дата изменения" Binding="{Binding ChangedTime, StringFormat={}{0:dd.MM.yy HH:mm}}"/>
+                    <DataGridTextColumn Header="Тип" Binding="{Binding Type}"/>
+                    <DataGridTextColumn Header="Размер" Binding="{Binding Size}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+    </Grid>
+</Window>
