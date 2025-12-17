@@ -11,8 +11,8 @@ namespace WpfTest.HelperClasses
 {
     internal static class FileDataManager
     {
+        public static readonly string FOLDER_TYPE_STRING = "Папка";
         public static bool DirectoryExists(string directory) => Directory.Exists(directory);
-
 
         public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
         {
@@ -28,7 +28,7 @@ namespace WpfTest.HelperClasses
                     {
                         Name = dir.Name,
                         Size = null,
-                        Type = "Папка",
+                        Type = FOLDER_TYPE_STRING,
                         ChangedTime = dir.LastWriteTime,
 
                     });

@@ -12,16 +12,24 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <!--TODO: Хотел бы, чтобы строка поиска растягивалась пропорционально длине окна-->
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
             <Label>Путь:</Label> <!--TODO: Можно искать файл при вводе текста (или через клавишу Enter)-->
-            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString}"></TextBox> <!--Для поиска при вводе текста, а не по нажатию кнопки: UpdateSourceTrigger=PropertyChanged-->
+            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding SearchCommand}" Key="Enter"/>
+                </TextBox.InputBindings>
+            </TextBox>
             <Button Margin="5" Command="{Binding SearchCommand}">Открыть</Button>
         </StackPanel>
 
         <Grid Margin="10" Grid.Row="1">
-            <DataGrid ItemsSource="{Binding Files}"
-                       CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+            <DataGrid ItemsSource="{Binding Files}" 
+                      SelectedItem="{Binding SelectedFileData}" 
+                      IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                       HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" >
+                <DataGrid.InputBindings>
+                    <MouseBinding Command="{Binding DoubleClickTableCommand}" MouseAction="LeftDoubleClick"/>
+                </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="Дата изменения" Binding="{Binding ChangedTime, StringFormat={}{0:dd.MM.yy HH:mm}}"/>
