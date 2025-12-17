@@ -25,7 +25,7 @@ namespace WpfTest.HelperClasses
                     files.Add(new FileData()
                     {
                         Name = dir.Name,
-                        Size = null,
+                        Size = FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(directory, dir.Name))),
                         Type = FOLDER_TYPE_STRING,
                         ChangedTime = dir.LastWriteTime,
 
@@ -43,7 +43,7 @@ namespace WpfTest.HelperClasses
                     });
                 }
             }
-            catch (Exception e) { Debug.Print("Ошибка: {}", e.Message); return false; }
+            catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
 
             return true;
         }
@@ -59,8 +59,8 @@ namespace WpfTest.HelperClasses
             string res = oldDirectory;
             if (addition != null) // Движение вперед
             {
-                if (oldDirectory[oldDirectory.Length - 1] != '/')
-                    res += '/';
+                if (oldDirectory[^1] != '/' && oldDirectory[^1] != '\\')
+                    res += '\\';
 
                 return res + addition;
             }
@@ -77,8 +77,23 @@ namespace WpfTest.HelperClasses
             return res[..(i + 1)];
         }
 
-        private static string FormatFileSize(long fileSize)
+        private static long? GetDirectorySize(string directory)
         {
+            DirectoryInfo di = new DirectoryInfo(directory);
+            long size;
+            try
+            {
+                size = di.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(f => f.Length);
+            }
+            catch (Exception) { return null; }
+            return size;
+        }
+
+
+        private static string FormatFileSize(long? fileSize)
+        {
+            if (fileSize == null) return "-";
+
             string[] suffixes = { "байт", "KB", "MB", "GB", "TB", "PB" };
             int i;
             for (i = 0; i < suffixes.Length; i++) // Подбираем "суффикс" в зависимости от деления на 1024
@@ -86,7 +101,7 @@ namespace WpfTest.HelperClasses
                 if (fileSize <= Math.Pow(1024, i + 1)) break;
             }
 
-            double value = fileSize / Math.Pow(1024, i);
+            double value = (double)fileSize / Math.Pow(1024, i);
             
             // Округление до большего числа (как в "проводнике")
             return double.Ceiling(value).ToString("0") + " " + suffixes[i];

@@ -71,7 +71,7 @@ namespace WpfTest.ViewModels
 
         private void DoubleClickOnTables()
         {
-            if (selectedFileData == null) return;
+            if (selectedFileData == null || searchString == string.Empty) return;
 
             if (selectedFileData.Type == FileDataManager.FOLDER_TYPE_STRING)
                 SearchString = FileDataManager.ChangeDirectoryPathString(searchString, selectedFileData.Name);
