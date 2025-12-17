@@ -11,13 +11,11 @@ namespace WpfTest.HelperClasses
 {
     internal static class FileDataManager
     {
-        public static void GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
-        {
-            files.Clear();
-            
-            if (!Directory.Exists(directory))
-                return;
+        public static readonly string FOLDER_TYPE_STRING = "Папка";
+        public static bool DirectoryExists(string directory) => Directory.Exists(directory);
 
+        public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
+        {
             try
             {
                 DirectoryInfo di = new DirectoryInfo(directory);
@@ -27,8 +25,8 @@ namespace WpfTest.HelperClasses
                     files.Add(new FileData()
                     {
                         Name = dir.Name,
-                        Size = null,
-                        Type = "Папка",
+                        Size = FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(directory, dir.Name))),
+                        Type = FOLDER_TYPE_STRING,
                         ChangedTime = dir.LastWriteTime,
 
                     });
@@ -45,11 +43,57 @@ namespace WpfTest.HelperClasses
                     });
                 }
             }
-            catch (Exception e) { Debug.Print("Ошибка: {}", e.Message); }
+            catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
+
+            return true;
         }
 
-        private static string FormatFileSize(long fileSize)
+        /// <summary>
+        /// Добавляет к пути новую директорию.
+        /// </summary>
+        /// <param name="oldDirectory">Значение текущего положения</param>
+        /// <param name="addition">Если null, то движение идет назад (закрываем текущую папку)</param>
+        /// <returns></returns>
+        public static string ChangeDirectoryPathString(string oldDirectory, string? addition)
         {
+            string res = oldDirectory;
+            if (addition != null) // Движение вперед
+            {
+                if (oldDirectory[^1] != '/' && oldDirectory[^1] != '\\')
+                    res += '\\';
+
+                return res + addition;
+            }
+
+            // Движение назад
+
+            if (oldDirectory[^1] == '/' || oldDirectory[^1] == '\\')
+                res = res[..^1];
+            
+            int indexSlash = res.LastIndexOf('/');
+            int indexReversedSlash = res.LastIndexOf('\\');
+            int i = int.Max(indexSlash, indexReversedSlash); // Подбор последнего слеша (либо / либо \)
+            
+            return res[..(i + 1)];
+        }
+
+        private static long? GetDirectorySize(string directory)
+        {
+            DirectoryInfo di = new DirectoryInfo(directory);
+            long size;
+            try
+            {
+                size = di.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(f => f.Length);
+            }
+            catch (Exception) { return null; }
+            return size;
+        }
+
+
+        private static string FormatFileSize(long? fileSize)
+        {
+            if (fileSize == null) return "-";
+
             string[] suffixes = { "байт", "KB", "MB", "GB", "TB", "PB" };
             int i;
             for (i = 0; i < suffixes.Length; i++) // Подбираем "суффикс" в зависимости от деления на 1024
@@ -57,9 +101,11 @@ namespace WpfTest.HelperClasses
                 if (fileSize <= Math.Pow(1024, i + 1)) break;
             }
 
-            double value = fileSize / Math.Pow(1024, i);
+            double value = (double)fileSize / Math.Pow(1024, i);
             
-            return value.ToString("0") + " " + suffixes[i];
+            // Округление до большего числа (как в "проводнике")
+            return double.Ceiling(value).ToString("0") + " " + suffixes[i];
         }
+
     }
 }
