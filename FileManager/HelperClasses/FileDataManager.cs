@@ -59,7 +59,8 @@ namespace WpfTest.HelperClasses
 
             double value = fileSize / Math.Pow(1024, i);
             
-            return value.ToString("0") + " " + suffixes[i];
+            // Округление до большего числа (как в "проводнике")
+            return double.Ceiling(value).ToString("0") + " " + suffixes[i];
         }
     }
 }

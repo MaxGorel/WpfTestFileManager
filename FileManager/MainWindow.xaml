@@ -12,9 +12,10 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
+        <!--TODO: Хотел бы, чтобы строка поиска растягивалась пропорционально длине окна-->
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-            <Label>Путь:</Label>
-            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString}"></TextBox>
+            <Label>Путь:</Label> <!--TODO: Можно искать файл при вводе текста (или через клавишу Enter)-->
+            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString}"></TextBox> <!--Для поиска при вводе текста, а не по нажатию кнопки: UpdateSourceTrigger=PropertyChanged-->
             <Button Margin="5" Command="{Binding SearchCommand}">Открыть</Button>
         </StackPanel>
 
@@ -25,7 +26,7 @@
                     <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="Дата изменения" Binding="{Binding ChangedTime, StringFormat={}{0:dd.MM.yy HH:mm}}"/>
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type}"/>
-                    <DataGridTextColumn Header="Размер" Binding="{Binding Size}"/>
+                    <DataGridTextColumn Header="Размер файла" Binding="{Binding Size}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
