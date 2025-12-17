@@ -58,23 +58,27 @@ namespace WpfTest.ViewModels
                 MessageBox.Show("Информация о файлах уже выгружена!");
                 return;
             }
-            
+
+            Files.Clear(); //TODO: Эта строка учавствует в сортировке вместе со всеми, т.е. не всегда в начале списка
+            Files.Add(new FileData() { Name = "...", Type = "Link" });
+
             if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
                 MessageBox.Show("Ошибка!");
 
             lastSearchString = searchString;
+
         }
 
         private void DoubleClickOnTables()
         {
             if (selectedFileData == null) return;
-            else if (selectedFileData.Type != FileDataManager.FOLDER_TYPE_STRING) return;
 
-            if (searchString[searchString.Length - 1] != '/')
-                searchString += '/';
-            SearchString = searchString + selectedFileData.Name;
+            if (selectedFileData.Type == FileDataManager.FOLDER_TYPE_STRING)
+                SearchString = FileDataManager.ChangeDirectoryPathString(searchString, selectedFileData.Name);
+            else if (selectedFileData.Name == "...")
+                SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
 
-            SearchDirectory();
+                SearchDirectory();
         }
 
     }
