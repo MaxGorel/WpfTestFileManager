@@ -11,12 +11,12 @@ namespace WpfTest.HelperClasses
 {
     internal static class FileDataManager
     {
-        public static void GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
+        public static bool DirectoryExists(string directory) => Directory.Exists(directory);
+
+
+        public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
         {
             files.Clear();
-            
-            if (!Directory.Exists(directory))
-                return;
 
             try
             {
@@ -45,7 +45,9 @@ namespace WpfTest.HelperClasses
                     });
                 }
             }
-            catch (Exception e) { Debug.Print("Ошибка: {}", e.Message); }
+            catch (Exception e) { Debug.Print("Ошибка: {}", e.Message); return false; }
+
+            return true;
         }
 
         private static string FormatFileSize(long fileSize)
