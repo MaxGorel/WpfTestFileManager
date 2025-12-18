@@ -60,13 +60,12 @@ namespace WpfTest.ViewModels
             }
 
             Files.Clear(); //TODO: Эта строка учавствует в сортировке вместе со всеми, т.е. не всегда в начале списка
-            Files.Add(new FileData() { Name = "...", Type = "Link" });
+            Files.Add(FileData.LinkToBackFileData);
 
             if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
                 MessageBox.Show("Ошибка!");
 
             lastSearchString = searchString;
-
         }
 
         private void DoubleClickOnTables()
@@ -78,7 +77,7 @@ namespace WpfTest.ViewModels
             else if (selectedFileData.Name == "...")
                 SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
 
-                SearchDirectory();
+            SearchDirectory();
         }
 
     }

@@ -23,19 +23,22 @@
         </StackPanel>
 
         <Grid Margin="10" Grid.Row="1">
+
             <DataGrid ItemsSource="{Binding Files}" 
-                      SelectedItem="{Binding SelectedFileData}" 
+                      SelectedItem="{Binding SelectedFileData}"
                       IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                        HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" >
                 <DataGrid.InputBindings>
                     <MouseBinding Command="{Binding DoubleClickTableCommand}" MouseAction="LeftDoubleClick"/>
                 </DataGrid.InputBindings>
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="Дата изменения" Binding="{Binding ChangedTime, StringFormat={}{0:dd.MM.yy HH:mm}}"/>
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type}"/>
                     <DataGridTextColumn Header="Размер файла" Binding="{Binding Size}"/>
                 </DataGrid.Columns>
+
             </DataGrid>
         </Grid>
 

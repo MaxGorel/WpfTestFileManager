@@ -8,5 +8,8 @@ namespace WpfTest.Models
         public DateTime ChangedTime { get; set; }
         public required string Type { get; set; }
         public string? Size { get; set; }
+
+
+        public readonly static FileData LinkToBackFileData = new() { Name = "...", Type = "...", Size = "" };
     }
 }
