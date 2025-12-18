@@ -14,12 +14,7 @@
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
             <Label>Путь:</Label> <!--TODO: Можно искать файл при вводе текста (или через клавишу Enter)-->
-            <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                <TextBox.InputBindings>
-                    <KeyBinding Command="{Binding SearchCommand}" Key="Enter"/>
-                </TextBox.InputBindings>
-            </TextBox>
-            <Label>Путь:</Label>
+
             <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SearchCommand}" Key="Enter"/>
