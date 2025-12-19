@@ -12,7 +12,8 @@ namespace FileManager.HelperClasses
 {
     internal static class FileDataManager
     {
-        public static readonly string FOLDER_TYPE_STRING = "Папка";
+        public static readonly string STRING_TYPE_FOLDER = "Папка";
+        public static readonly string STRING_TYPE_DRIVE = "Диск";
         public static bool DirectoryExists(string directory) => Directory.Exists(directory);
 
         public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
@@ -28,7 +29,7 @@ namespace FileManager.HelperClasses
                     {
                         Name = dir.Name,
                         Size = FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(directory, dir.Name))),
-                        Type = FOLDER_TYPE_STRING,
+                        Type = STRING_TYPE_FOLDER,
                         ChangedTime = dir.LastWriteTime,
 
                     });
@@ -49,6 +50,29 @@ namespace FileManager.HelperClasses
 
             return true;
         }
+
+        public static bool GetFileDataFromDisks(ObservableCollection<FileData> files)
+        {
+            files.Clear();
+            try
+            {
+                foreach (var drive in DriveInfo.GetDrives()) //Поиск папок
+                {
+                    files.Add(new FileData()
+                    {
+                        Name = drive.Name,
+                        Size = null, //FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(dir.Name))),
+                        Type = STRING_TYPE_DRIVE,
+                        ChangedTime = null,
+
+                    });
+                }
+            }
+            catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Добавляет к пути новую директорию.

@@ -14,6 +14,7 @@ namespace FileManager.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        private const string SEARCH_STRING_DRIVES = "disks";
         public ObservableCollection<FileData> Files { get; set; } = new();
         public ObservableCollection<FileData> BackLink { get; set; } = new();
         public RelayCommand SearchCommand => new RelayCommand(execute => SearchDirectory());
@@ -55,7 +56,8 @@ namespace FileManager.ViewModels
         //
         private void SearchDirectory() // Вызывается при нажатии кнопки
         {
-            if (searchString == string.Empty || !FileDataManager.DirectoryExists(searchString))
+            if (searchString == string.Empty || 
+                (searchString != SEARCH_STRING_DRIVES && !FileDataManager.DirectoryExists(searchString)))
             {
                 MessageBox.Show("Введите корректный путь!");
                 return;
@@ -66,7 +68,9 @@ namespace FileManager.ViewModels
                 return;
             }
 
-            if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
+            if (searchString == SEARCH_STRING_DRIVES)
+                FileDataManager.GetFileDataFromDisks(Files);
+            else if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
                 MessageBox.Show("Ошибка!");
 
             lastSearchString = searchString;
@@ -74,16 +78,21 @@ namespace FileManager.ViewModels
 
         private void DoubleClickOnBackLink()
         {
-            // TODO: Add drives 
             SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
+            
+            if (SearchString == string.Empty)
+                SearchString = SEARCH_STRING_DRIVES;
+
             SearchDirectory();
         }
         private void DoubleClickOnTables()
         { 
             if (selectedFileData == null || searchString == string.Empty) return;
 
-            if (selectedFileData.Type == FileDataManager.FOLDER_TYPE_STRING)
+            if (selectedFileData.Type == FileDataManager.STRING_TYPE_FOLDER)
                 SearchString = FileDataManager.ChangeDirectoryPathString(searchString, selectedFileData.Name);
+            else if (selectedFileData.Type == FileDataManager.STRING_TYPE_DRIVE)
+                SearchString = selectedFileData.Name;
 
             SearchDirectory();
         }
