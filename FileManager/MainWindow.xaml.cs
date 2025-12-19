@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Windows;
-using WpfTest.ViewModels;
+using FileManager.ViewModels;
 
 namespace FileManager
 {
@@ -12,8 +12,7 @@ namespace FileManager
         public MainWindow()
         {
             InitializeComponent();
-            MainWindowViewModel vm = new MainWindowViewModel();
-            DataContext = vm;
+            DataContext = new MainWindowViewModel();
         }
     }
 }

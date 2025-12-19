@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FileManager" xmlns:viewmodels="clr-namespace:WpfTest.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        xmlns:local="clr-namespace:FileManager" 
+        xmlns:viewmodels="clr-namespace:FileManager.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinWidth="730" MinHeight="330">
     <Grid>
@@ -23,8 +24,25 @@
         </StackPanel>
 
         <Grid Margin="10" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            
+            <DataGrid Grid.Row="0" AutoGenerateColumns="False" HeadersVisibility="None"
+                      ItemsSource="{Binding BackLink}"
+                      IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                      HorizontalGridLinesBrush="Transparent" VerticalGridLinesBrush="Transparent">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                </DataGrid.Columns>
 
-            <DataGrid ItemsSource="{Binding Files}" 
+                <DataGrid.InputBindings>
+                    <MouseBinding Command="{Binding DoubleClickBackLinkCommand}" MouseAction="LeftDoubleClick"/>
+                </DataGrid.InputBindings>
+            </DataGrid>
+            
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Files}" 
                       SelectedItem="{Binding SelectedFileData}"
                       IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                        HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" >

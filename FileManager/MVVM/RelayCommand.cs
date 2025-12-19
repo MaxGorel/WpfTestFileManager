@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace WpfTest.MVVM
+namespace FileManager.MVVM
 {
-    class ButtonCommand : ICommand
+    class RelayCommand : ICommand
     {
         private Action<object?> execute;
         public event EventHandler? CanExecuteChanged;
 
-        public ButtonCommand(Action<object?> execute)
+        public RelayCommand(Action<object?> execute)
         {
             this.execute = execute;
         }

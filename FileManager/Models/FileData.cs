@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WpfTest.Models
+namespace FileManager.Models
 {
     class FileData
     {

@@ -6,17 +6,24 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using WpfTest.HelperClasses;
-using WpfTest.Models;
-using WpfTest.MVVM;
+using FileManager.HelperClasses;
+using FileManager.Models;
+using FileManager.MVVM;
 
-namespace WpfTest.ViewModels
+namespace FileManager.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<FileData> Files { get; set; } = new();
-        public ButtonCommand SearchCommand => new ButtonCommand(execute => SearchDirectory());
-        public ButtonCommand DoubleClickTableCommand => new ButtonCommand(execute => DoubleClickOnTables());
+        public ObservableCollection<FileData> BackLink { get; set; } = new();
+        public RelayCommand SearchCommand => new RelayCommand(execute => SearchDirectory());
+        public RelayCommand DoubleClickTableCommand => new RelayCommand(execute => DoubleClickOnTables());
+        public RelayCommand DoubleClickBackLinkCommand => new RelayCommand(execute => DoubleClickOnBackLink());
+
+        public MainWindowViewModel()
+        {
+            BackLink.Add(FileData.LinkToBackFileData);
+        }
 
         //
         // ----------- Текстовое поле ввода
@@ -59,23 +66,24 @@ namespace WpfTest.ViewModels
                 return;
             }
 
-            Files.Clear(); //TODO: Эта строка учавствует в сортировке вместе со всеми, т.е. не всегда в начале списка
-            Files.Add(FileData.LinkToBackFileData);
-
             if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
                 MessageBox.Show("Ошибка!");
 
             lastSearchString = searchString;
         }
 
-        private void DoubleClickOnTables()
+        private void DoubleClickOnBackLink()
         {
+            // TODO: Add drives 
+            SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
+            SearchDirectory();
+        }
+        private void DoubleClickOnTables()
+        { 
             if (selectedFileData == null || searchString == string.Empty) return;
 
             if (selectedFileData.Type == FileDataManager.FOLDER_TYPE_STRING)
                 SearchString = FileDataManager.ChangeDirectoryPathString(searchString, selectedFileData.Name);
-            else if (selectedFileData.Name == "...")
-                SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
 
             SearchDirectory();
         }

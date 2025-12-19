@@ -1,13 +1,14 @@
-﻿using System;
+﻿using FileManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using WpfTest.Models;
+using static System.Net.WebRequestMethods;
 
-namespace WpfTest.HelperClasses
+namespace FileManager.HelperClasses
 {
     internal static class FileDataManager
     {
@@ -16,6 +17,7 @@ namespace WpfTest.HelperClasses
 
         public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
         {
+            files.Clear();
             try
             {
                 DirectoryInfo di = new DirectoryInfo(directory);
