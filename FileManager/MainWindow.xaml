@@ -9,11 +9,19 @@
         Title="MainWindow" Height="450" Width="800" MinWidth="730" MinHeight="330">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="10*"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+        <!--Загрузка и сохранение-->
+        <StackPanel Margin="500,0,0,0" Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Margin="2 " Command="{Binding SaveCommand}">Сохранение</Button>
+            <Button Margin="2" Command="{Binding LoadCommand}">Загрузка</Button>
+        </StackPanel>
+
+        <!--Строка пути к директории-->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
             <Label>Путь:</Label>
             <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <TextBox.InputBindings>
@@ -23,7 +31,8 @@
             <Button Margin="5" Command="{Binding SearchCommand}">Открыть</Button>
         </StackPanel>
 
-        <Grid Margin="10" Grid.Row="1">
+        <!--Отображение-->
+        <Grid Margin="10" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100*"/>

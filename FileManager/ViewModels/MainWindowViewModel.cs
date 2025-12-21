@@ -17,9 +17,11 @@ namespace FileManager.ViewModels
         private const string SEARCH_STRING_DRIVES = "disks";
         public ObservableCollection<FileData> Files { get; set; } = new();
         public ObservableCollection<FileData> BackLink { get; set; } = new();
-        public RelayCommand SearchCommand => new RelayCommand(execute => SearchDirectory());
-        public RelayCommand DoubleClickTableCommand => new RelayCommand(execute => DoubleClickOnTables());
-        public RelayCommand DoubleClickBackLinkCommand => new RelayCommand(execute => DoubleClickOnBackLink());
+        public RelayCommand SearchCommand => new(execute => SearchDirectory());
+        public RelayCommand SaveCommand => new(execute => SaveSnapshot());
+        public RelayCommand LoadCommand => new(execute => LoadSnapshot());
+        public RelayCommand DoubleClickTableCommand => new(execute => DoubleClickOnTables());
+        public RelayCommand DoubleClickBackLinkCommand => new(execute => DoubleClickOnBackLink());
 
         public MainWindowViewModel()
         {
@@ -76,6 +78,20 @@ namespace FileManager.ViewModels
             lastSearchString = searchString;
         }
 
+        private void SaveSnapshot()
+        {
+            SnapshotService.Save(Files);
+        }
+
+        private void LoadSnapshot()
+        {
+            var fileList = SnapshotService.Load();
+            if (fileList != null)
+            {
+                Files.Clear();
+                foreach (var file in fileList) Files.Add(file);
+            }
+        }
         private void DoubleClickOnBackLink()
         {
             SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
