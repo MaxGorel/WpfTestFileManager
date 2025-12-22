@@ -78,7 +78,7 @@ namespace FileManager.HelperClasses
         }
         private static void SaveToJSON(string filename, IEnumerable<FileData> fileData)
         {
-            using FileStream fs = new(filename, FileMode.Truncate);
+            using FileStream fs = new(filename, FileMode.Create);
             JsonSerializerOptions options = new()
             {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),

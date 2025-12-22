@@ -74,6 +74,8 @@ namespace FileManager.HelperClasses
         /// <returns></returns>
         public static string ChangeDirectoryPathString(string oldDirectory, string? addition)
         {
+            if (oldDirectory == string.Empty) return string.Empty;
+
             string res = oldDirectory;
             if (addition != null) // Движение вперед
             {
