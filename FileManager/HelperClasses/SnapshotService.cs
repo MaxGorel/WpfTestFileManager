@@ -31,14 +31,8 @@ namespace FileManager.HelperClasses
             saveDialog.Filter = "Файлы xml|*.xml|Файлы json|*.json";
             if (saveDialog.ShowDialog() == true)
             {
-                if (saveDialog.FileName.EndsWith(".xml"))
-                {
-                    SaveToXML(saveDialog.FileName, fileData);
-                }
-                else if (saveDialog.FileName.EndsWith(".json"))
-                {
-                    SaveToJSON(saveDialog.FileName, fileData);
-                }
+                if (saveDialog.FileName.EndsWith(".xml"))           SaveToXML(saveDialog.FileName, fileData);
+                else if (saveDialog.FileName.EndsWith(".json"))     SaveToJSON(saveDialog.FileName, fileData);
                 else MessageBox.Show("Сохранение в файл данного типа не поддерживаается");
             }
         }
@@ -50,20 +44,12 @@ namespace FileManager.HelperClasses
             OpenFileDialog openDialog = new();
             if (openDialog.ShowDialog() == true)
             {
-                if (openDialog.FileName.EndsWith(".xml"))
-                {
-                    fileList = LoadFromXML(openDialog.FileName);
-                }
-                else if (openDialog.FileName.EndsWith(".json"))
-                {
-                    fileList = LoadFromJSON(openDialog.FileName);
-                }
+                if (openDialog.FileName.EndsWith(".xml"))           fileList = LoadFromXML(openDialog.FileName);
+                else if (openDialog.FileName.EndsWith(".json"))     fileList = LoadFromJSON(openDialog.FileName);
                 else MessageBox.Show("Загрузка файла данного типа не поддерживаается");
             }
             return fileList;
         }
-
-
 
         private static void SaveToXML(string filename, IEnumerable<FileData> files)
         {
@@ -92,16 +78,14 @@ namespace FileManager.HelperClasses
         }
         private static void SaveToJSON(string filename, IEnumerable<FileData> fileData)
         {
-            using (FileStream fs = new(filename, FileMode.Truncate))
+            using FileStream fs = new(filename, FileMode.Truncate);
+            JsonSerializerOptions options = new()
             {
-                JsonSerializerOptions options = new()
-                {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-                    WriteIndented = true,
-                };
-                //options.Converters.Add(JSONdateTimeConverter);
-                JsonSerializer.Serialize(fs, fileData, options);
-            }
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                WriteIndented = true,
+            };
+            //options.Converters.Add(JSONdateTimeConverter);
+            JsonSerializer.Serialize(fs, fileData, options);
         }
 
         private static List<FileData>? LoadFromXML(string filename)
@@ -138,18 +122,16 @@ namespace FileManager.HelperClasses
 
             try
             {
-                using (FileStream fs = new FileStream(filename, FileMode.Open))
+                using FileStream fs = new FileStream(filename, FileMode.Open);
+                JsonSerializerOptions options = new()
                 {
-                    JsonSerializerOptions options = new()
-                    {
-                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-                        WriteIndented = true
-                    };
-                    //options.Converters.Add(JSONdateTimeConverter);
-                    IEnumerable<FileData>? data = JsonSerializer.Deserialize<IEnumerable<FileData>>(fs);
-                    if (data == null) return null;
-                    foreach (var file in data) fileList.Add(file);
-                }
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+                    WriteIndented = true
+                };
+                //options.Converters.Add(JSONdateTimeConverter);
+                IEnumerable<FileData>? data = JsonSerializer.Deserialize<IEnumerable<FileData>>(fs);
+                if (data == null) return null;
+                foreach (var file in data) fileList.Add(file);
             }
             catch (Exception e) { Debug.Print("Ошибка загрузки файла: {0}", e.Message); return null; }
 
