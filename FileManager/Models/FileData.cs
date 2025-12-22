@@ -1,8 +1,9 @@
 ﻿using System;
 
-namespace WpfTest.Models
+namespace FileManager.Models
 {
-    class FileData
+    [Serializable]
+    public class FileData
     {
         public required string Name { get; set; }
         public DateTime? ChangedTime { get; set; }

@@ -6,17 +6,27 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using WpfTest.HelperClasses;
-using WpfTest.Models;
-using WpfTest.MVVM;
+using FileManager.HelperClasses;
+using FileManager.Models;
+using FileManager.MVVM;
 
-namespace WpfTest.ViewModels
+namespace FileManager.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
+        private const string SEARCH_STRING_DRIVES = "drives";
         public ObservableCollection<FileData> Files { get; set; } = new();
-        public ButtonCommand SearchCommand => new ButtonCommand(execute => SearchDirectory());
-        public ButtonCommand DoubleClickTableCommand => new ButtonCommand(execute => DoubleClickOnTables());
+        public ObservableCollection<FileData> BackLink { get; set; } = new();
+        public RelayCommand SearchCommand => new(execute => SearchDirectory());
+        public RelayCommand SaveCommand => new(execute => SaveSnapshot());
+        public RelayCommand LoadCommand => new(execute => LoadSnapshot());
+        public RelayCommand DoubleClickTableCommand => new(execute => DoubleClickOnTables());
+        public RelayCommand DoubleClickBackLinkCommand => new(execute => DoubleClickOnBackLink());
+
+        public MainWindowViewModel()
+        {
+            BackLink.Add(FileData.LinkToBackFileData);
+        }
 
         //
         // ----------- Текстовое поле ввода
@@ -48,7 +58,8 @@ namespace WpfTest.ViewModels
         //
         private void SearchDirectory() // Вызывается при нажатии кнопки
         {
-            if (searchString == string.Empty || !FileDataManager.DirectoryExists(searchString))
+            if (searchString == string.Empty || 
+                (searchString != SEARCH_STRING_DRIVES && !FileDataManager.DirectoryExists(searchString)))
             {
                 MessageBox.Show("Введите корректный путь!");
                 return;
@@ -59,23 +70,45 @@ namespace WpfTest.ViewModels
                 return;
             }
 
-            Files.Clear(); //TODO: Эта строка учавствует в сортировке вместе со всеми, т.е. не всегда в начале списка
-            Files.Add(FileData.LinkToBackFileData);
-
-            if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
+            if (searchString == SEARCH_STRING_DRIVES)
+                FileDataManager.GetFileDataFromDisks(Files);
+            else if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
                 MessageBox.Show("Ошибка!");
 
             lastSearchString = searchString;
         }
 
-        private void DoubleClickOnTables()
+        private void SaveSnapshot()
         {
+            SnapshotService.Save(Files);
+        }
+
+        private void LoadSnapshot()
+        {
+            var fileList = SnapshotService.Load();
+            if (fileList != null)
+            {
+                Files.Clear();
+                foreach (var file in fileList) Files.Add(file);
+            }
+        }
+        private void DoubleClickOnBackLink()
+        {
+            SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
+            
+            if (SearchString == string.Empty)
+                SearchString = SEARCH_STRING_DRIVES;
+
+            SearchDirectory();
+        }
+        private void DoubleClickOnTables()
+        { 
             if (selectedFileData == null || searchString == string.Empty) return;
 
-            if (selectedFileData.Type == FileDataManager.FOLDER_TYPE_STRING)
+            if (selectedFileData.Type == FileDataManager.STRING_TYPE_FOLDER)
                 SearchString = FileDataManager.ChangeDirectoryPathString(searchString, selectedFileData.Name);
-            else if (selectedFileData.Name == "...")
-                SearchString = FileDataManager.ChangeDirectoryPathString(searchString, null);
+            else if (selectedFileData.Type == FileDataManager.STRING_TYPE_DRIVE)
+                SearchString = selectedFileData.Name;
 
             SearchDirectory();
         }

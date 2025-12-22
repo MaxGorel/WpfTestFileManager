@@ -1,21 +1,24 @@
-﻿using System;
+﻿using FileManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using WpfTest.Models;
+using static System.Net.WebRequestMethods;
 
-namespace WpfTest.HelperClasses
+namespace FileManager.HelperClasses
 {
     internal static class FileDataManager
     {
-        public static readonly string FOLDER_TYPE_STRING = "Папка";
+        public static readonly string STRING_TYPE_FOLDER = "Папка";
+        public static readonly string STRING_TYPE_DRIVE = "Диск";
         public static bool DirectoryExists(string directory) => Directory.Exists(directory);
 
         public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
         {
+            files.Clear();
             try
             {
                 DirectoryInfo di = new DirectoryInfo(directory);
@@ -26,7 +29,7 @@ namespace WpfTest.HelperClasses
                     {
                         Name = dir.Name,
                         Size = FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(directory, dir.Name))),
-                        Type = FOLDER_TYPE_STRING,
+                        Type = STRING_TYPE_FOLDER,
                         ChangedTime = dir.LastWriteTime,
 
                     });
@@ -47,6 +50,29 @@ namespace WpfTest.HelperClasses
 
             return true;
         }
+
+        public static bool GetFileDataFromDisks(ObservableCollection<FileData> files)
+        {
+            files.Clear();
+            try
+            {
+                foreach (var drive in DriveInfo.GetDrives()) //Поиск папок
+                {
+                    files.Add(new FileData()
+                    {
+                        Name = drive.Name,
+                        Size = FormatFileSize(drive.TotalSize, false), //FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(dir.Name))),
+                        Type = STRING_TYPE_DRIVE,
+                        ChangedTime = null,
+
+                    });
+                }
+            }
+            catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Добавляет к пути новую директорию.
@@ -90,7 +116,7 @@ namespace WpfTest.HelperClasses
         }
 
 
-        private static string FormatFileSize(long? fileSize)
+        private static string FormatFileSize(long? fileSize, bool ceiling = true)
         {
             if (fileSize == null) return "-";
 
@@ -103,8 +129,10 @@ namespace WpfTest.HelperClasses
 
             double value = (double)fileSize / Math.Pow(1024, i);
             
-            // Округление до большего числа (как в "проводнике")
-            return double.Ceiling(value).ToString("0") + " " + suffixes[i];
+            if (ceiling) // Округление до большего числа (как в "проводнике")
+                return double.Ceiling(value).ToString("0") + " " + suffixes[i];
+            else        // Округление - для дисков
+                return double.Floor(value).ToString("0") + " " + suffixes[i];
         }
 
     }

@@ -3,16 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FileManager" xmlns:viewmodels="clr-namespace:WpfTest.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        xmlns:local="clr-namespace:FileManager" 
+        xmlns:viewmodels="clr-namespace:FileManager.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinWidth="730" MinHeight="330">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="10*"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+        <!--Загрузка и сохранение-->
+        <StackPanel Margin="500,0,0,0" Grid.Row="0" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Margin="2 " Command="{Binding SaveCommand}">Сохранение</Button>
+            <Button Margin="2" Command="{Binding LoadCommand}">Загрузка</Button>
+        </StackPanel>
+
+        <!--Строка пути к директории-->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal" VerticalAlignment="Center">
             <Label>Путь:</Label>
             <TextBox Width="600" VerticalAlignment="Center" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <TextBox.InputBindings>
@@ -22,9 +31,27 @@
             <Button Margin="5" Command="{Binding SearchCommand}">Открыть</Button>
         </StackPanel>
 
-        <Grid Margin="10" Grid.Row="1">
+        <!--Отображение-->
+        <Grid Margin="10" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            
+            <DataGrid Grid.Row="0" AutoGenerateColumns="False" HeadersVisibility="None"
+                      ItemsSource="{Binding BackLink}"
+                      IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                      HorizontalGridLinesBrush="Transparent" VerticalGridLinesBrush="Transparent">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
+                </DataGrid.Columns>
 
-            <DataGrid ItemsSource="{Binding Files}" 
+                <DataGrid.InputBindings>
+                    <MouseBinding Command="{Binding DoubleClickBackLinkCommand}" MouseAction="LeftDoubleClick"/>
+                </DataGrid.InputBindings>
+            </DataGrid>
+            
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Files}" 
                       SelectedItem="{Binding SelectedFileData}"
                       IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
                        HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" >
