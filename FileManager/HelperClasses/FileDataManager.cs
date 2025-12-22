@@ -61,7 +61,7 @@ namespace FileManager.HelperClasses
                     files.Add(new FileData()
                     {
                         Name = drive.Name,
-                        Size = null, //FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(dir.Name))),
+                        Size = FormatFileSize(drive.TotalSize, false), //FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(dir.Name))),
                         Type = STRING_TYPE_DRIVE,
                         ChangedTime = null,
 
@@ -116,7 +116,7 @@ namespace FileManager.HelperClasses
         }
 
 
-        private static string FormatFileSize(long? fileSize)
+        private static string FormatFileSize(long? fileSize, bool ceiling = true)
         {
             if (fileSize == null) return "-";
 
@@ -129,8 +129,10 @@ namespace FileManager.HelperClasses
 
             double value = (double)fileSize / Math.Pow(1024, i);
             
-            // Округление до большего числа (как в "проводнике")
-            return double.Ceiling(value).ToString("0") + " " + suffixes[i];
+            if (ceiling) // Округление до большего числа (как в "проводнике")
+                return double.Ceiling(value).ToString("0") + " " + suffixes[i];
+            else        // Округление - для дисков
+                return double.Floor(value).ToString("0") + " " + suffixes[i];
         }
 
     }

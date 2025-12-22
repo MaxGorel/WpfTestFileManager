@@ -14,7 +14,7 @@ namespace FileManager.ViewModels
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-        private const string SEARCH_STRING_DRIVES = "disks";
+        private const string SEARCH_STRING_DRIVES = "drives";
         public ObservableCollection<FileData> Files { get; set; } = new();
         public ObservableCollection<FileData> BackLink { get; set; } = new();
         public RelayCommand SearchCommand => new(execute => SearchDirectory());
