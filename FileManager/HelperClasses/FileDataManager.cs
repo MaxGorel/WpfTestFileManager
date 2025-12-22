@@ -18,6 +18,7 @@ namespace FileManager.HelperClasses
 
         public static bool GetFileDataFromDirectory(string directory, ObservableCollection<FileData> files)
         {
+            files.Clear();
             try
             {
                 DirectoryInfo di = new DirectoryInfo(directory);
