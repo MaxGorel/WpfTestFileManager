@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using FileManager.HelperClasses;
 using FileManager.Models;
 using FileManager.MVVM;
@@ -56,7 +52,7 @@ namespace FileManager.ViewModels
         //
         // ----------- Функции
         //
-        private void SearchDirectory() // Вызывается при нажатии кнопки
+        private void SearchDirectory()
         {
             if (searchString == string.Empty || 
                 (searchString != SEARCH_STRING_DRIVES && !FileDataManager.DirectoryExists(searchString)))
@@ -70,6 +66,7 @@ namespace FileManager.ViewModels
                 return;
             }
 
+            Files.Clear();
             if (searchString == SEARCH_STRING_DRIVES)
                 FileDataManager.GetFileDataFromDisks(Files);
             else if (!FileDataManager.GetFileDataFromDirectory(searchString, Files))
@@ -86,11 +83,8 @@ namespace FileManager.ViewModels
         private void LoadSnapshot()
         {
             var fileList = SnapshotService.Load();
-            if (fileList != null)
-            {
-                Files.Clear();
-                foreach (var file in fileList) Files.Add(file);
-            }
+            Files.Clear();
+            if (fileList != null) foreach (var file in fileList) Files.Add(file);
         }
         private void DoubleClickOnBackLink()
         {

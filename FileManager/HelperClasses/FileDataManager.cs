@@ -24,7 +24,6 @@ namespace FileManager.HelperClasses
                 DirectoryInfo di = new DirectoryInfo(directory);
 
                 foreach (var dir in di.GetDirectories()) //Поиск папок
-                {
                     files.Add(new FileData()
                     {
                         Name = dir.Name,
@@ -33,10 +32,8 @@ namespace FileManager.HelperClasses
                         ChangedTime = dir.LastWriteTime,
 
                     });
-                }
 
                 foreach (var file in di.GetFiles()) //Поиск файлов
-                {
                     files.Add(new FileData()
                     {
                         Name = file.Name,
@@ -44,7 +41,6 @@ namespace FileManager.HelperClasses
                         Type = file.Extension,
                         ChangedTime = file.LastWriteTime,
                     });
-                }
             }
             catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
 
@@ -53,20 +49,17 @@ namespace FileManager.HelperClasses
 
         public static bool GetFileDataFromDisks(ObservableCollection<FileData> files)
         {
-            files.Clear();
             try
             {
-                foreach (var drive in DriveInfo.GetDrives()) //Поиск папок
-                {
+                foreach (var drive in DriveInfo.GetDrives()) //Поиск дисков
                     files.Add(new FileData()
                     {
                         Name = drive.Name,
-                        Size = FormatFileSize(drive.TotalSize, false), //FormatFileSize(GetDirectorySize(ChangeDirectoryPathString(dir.Name))),
+                        Size = FormatFileSize(drive.TotalSize, false),
                         Type = STRING_TYPE_DRIVE,
                         ChangedTime = null,
 
                     });
-                }
             }
             catch (Exception e) { Debug.Print("Ошибка: {0}", e.Message); return false; }
 
@@ -82,6 +75,8 @@ namespace FileManager.HelperClasses
         /// <returns></returns>
         public static string ChangeDirectoryPathString(string oldDirectory, string? addition)
         {
+            if (oldDirectory == string.Empty) return string.Empty;
+
             string res = oldDirectory;
             if (addition != null) // Движение вперед
             {
@@ -106,7 +101,7 @@ namespace FileManager.HelperClasses
         private static long? GetDirectorySize(string directory)
         {
             DirectoryInfo di = new DirectoryInfo(directory);
-            long size;
+            long? size;
             try
             {
                 size = di.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(f => f.Length);
@@ -123,9 +118,7 @@ namespace FileManager.HelperClasses
             string[] suffixes = { "байт", "KB", "MB", "GB", "TB", "PB" };
             int i;
             for (i = 0; i < suffixes.Length; i++) // Подбираем "суффикс" в зависимости от деления на 1024
-            {
                 if (fileSize <= Math.Pow(1024, i + 1)) break;
-            }
 
             double value = (double)fileSize / Math.Pow(1024, i);
             

@@ -37,7 +37,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
-            
+
+            <!--...-->
             <DataGrid Grid.Row="0" AutoGenerateColumns="False" HeadersVisibility="None"
                       ItemsSource="{Binding BackLink}"
                       IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
@@ -45,12 +46,11 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
                 </DataGrid.Columns>
-
                 <DataGrid.InputBindings>
                     <MouseBinding Command="{Binding DoubleClickBackLinkCommand}" MouseAction="LeftDoubleClick"/>
                 </DataGrid.InputBindings>
             </DataGrid>
-            
+
             <DataGrid Grid.Row="1" ItemsSource="{Binding Files}" 
                       SelectedItem="{Binding SelectedFileData}"
                       IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
@@ -65,9 +65,8 @@
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type}"/>
                     <DataGridTextColumn Header="Размер файла" Binding="{Binding Size}"/>
                 </DataGrid.Columns>
-
             </DataGrid>
-        </Grid>
 
+        </Grid>
     </Grid>
 </Window>
